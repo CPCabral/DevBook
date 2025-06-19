@@ -1,7 +1,7 @@
 package repositorios
 
 import (
-	"api/src/modelos"
+	"api/src/modelos"	
 	"database/sql"
 	"fmt"
 )
@@ -88,6 +88,7 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
 		if erro = linhas.Scan(
 			&usuario.ID,
 			&usuario.Nome,
+			&usuario.Nick,
 			&usuario.Email,
 			&usuario.CriadoEm,
 		); erro != nil{
@@ -95,4 +96,20 @@ func (repositorio Usuarios) BuscarPorID(ID uint64) (modelos.Usuario, error) {
 		}		
 	}
 	return usuario, nil
+}
+
+// Atualizar altera as informações do usuario no banco de dados
+func (repositorio Usuarios) Atualizar(ID uint64, usuario modelos.Usuario) error{
+	statement, erro := repositorio.db.Prepare(
+		"update usuarios set nome = ?, nick = ?, email = ? where id = ?",
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(usuario.Nome, usuario.Nick, usuario.Email, ID); erro != nil{
+		return erro
+	}
+	return nil
 }
