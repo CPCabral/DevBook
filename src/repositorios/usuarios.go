@@ -2,7 +2,7 @@ package repositorios
 
 import (
 	"api/src/modelos"
-	
+
 	"database/sql"
 	"fmt"
 )
