@@ -135,7 +135,7 @@ func (repositorio Usuarios) Atualizar(ID uint64, usuario modelos.Usuario) error{
 }
 
 // Deletera exclui as informações de um usuario no banco de dados
-func (repositorio Usuarios) Deletar( ID uint64) error {
+func (repositorio Usuarios) Deletar(ID uint64) error {
 	statement, erro := repositorio.db.Prepare("delete from usuarios where id = ?")
 	if erro != nil {
 		return erro
@@ -143,6 +143,22 @@ func (repositorio Usuarios) Deletar( ID uint64) error {
 	defer statement.Close()
 
 	if _, erro = statement.Exec(ID); erro != nil {
+		return erro
+	}
+	return nil
+}
+
+// Seguir permite que um usuario siga outro
+func (repositorio Usuarios) Seguir(usuarioID, seguidorID  uint64) error{
+	statement, erro := repositorio.db.Prepare(
+		"insert ignore into seguidores (usuario_id, seguidor_id) values (?, ?)",	
+	)
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+	
+	if _, erro = statement.Exec(usuarioID, seguidorID); erro != nil {
 		return erro
 	}
 	return nil
