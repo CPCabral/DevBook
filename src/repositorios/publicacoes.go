@@ -96,6 +96,7 @@ func (repositorio Publicacoes) Buscar(usuarioID uint64) ([]modelos.Publicacao, e
 	}
 	return publicacoes, nil
 }
+
 // Atualizar altera os dados de uma publicação no banco de dados
 func (repositorio Publicacoes) Atualizar(publicacaoID uint64, publicacao modelos.Publicacao) error {
 	statement, erro := repositorio.db.Prepare("update publicacoes set titulo = ?, conteudo = ? where id = ?")
@@ -122,4 +123,37 @@ func (repositorio Publicacoes) Deletar(publicacaoID uint64) error {
 		return erro
 	}
 	return nil
+}
+
+// BuscarPorUsuario traz as publicações de um usuarioID
+func (repositorio Publicacoes) BuscarPorUsuario(usuarioID uint64) ([]modelos.Publicacao, error) {
+	linhas, erro := repositorio.db.Query(` 
+	select p.*, u.nick from publicacoes p
+	join usuarios u on u.id =	p.autor_id
+	where p.autor_id = ?`,
+	usuarioID,
+)
+if erro != nil {
+	return nil, erro
+}
+defer linhas.Close()
+
+var publicacoes []modelos.Publicacao
+
+	for linhas.Next() {
+		var publicacao modelos.Publicacao
+		if erro = linhas.Scan(
+			&publicacao.ID,
+			&publicacao.Titulo,
+			&publicacao.Conteudo,
+			&publicacao.AutorID,
+			&publicacao.Curtidas,
+			&publicacao.CriadaEm,
+			&publicacao.AutorNick,
+		); erro != nil {
+			return nil, erro
+		}
+		publicacoes = append(publicacoes, publicacao)
+	}
+	return publicacoes, nil
 }
