@@ -132,13 +132,13 @@ func (repositorio Publicacoes) BuscarPorUsuario(usuarioID uint64) ([]modelos.Pub
 	join usuarios u on u.id =	p.autor_id
 	where p.autor_id = ?`,
 	usuarioID,
-)
-if erro != nil {
-	return nil, erro
-}
-defer linhas.Close()
+	)
+	if erro != nil {
+		return nil, erro
+	}
+	defer linhas.Close()
 
-var publicacoes []modelos.Publicacao
+	var publicacoes []modelos.Publicacao
 
 	for linhas.Next() {
 		var publicacao modelos.Publicacao
@@ -156,4 +156,18 @@ var publicacoes []modelos.Publicacao
 		publicacoes = append(publicacoes, publicacao)
 	}
 	return publicacoes, nil
+}
+
+// Curtir adiciona uma curtida à publicação
+func (repositorio Publicacoes) Curtir(publicacaoID uint64) error{
+	statement, erro := repositorio.db.Prepare("update publicacoes set curtidas = curtidas + 1 where id = ?")
+	if erro != nil {
+		return erro
+	}
+	defer statement.Close()
+
+	if _, erro = statement.Exec(publicacaoID); erro != nil {
+		return erro
+	}
+	return nil
 }
