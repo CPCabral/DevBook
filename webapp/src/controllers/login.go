@@ -3,9 +3,8 @@ package controllers
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
-	"io"
 	"net/http"
+	"webapp/src/modelos"
 	"webapp/src/respostas"
 )
 
@@ -27,7 +26,20 @@ func FazerLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer response.Body.Close()
-	token, _ := io.ReadAll(response.Body)
-	fmt.Println(response.StatusCode, string(token))
+	
+	if response.StatusCode >= 400 {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	var dadosAutenticacao modelos.DadosAutenticacao
+	if erro = json.NewDecoder(response.Body).Decode(&dadosAutenticacao); erro != nil {
+		respostas.JSON(w, http.StatusUnprocessableEntity, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	
+	//
+
+	respostas.JSON(w, http.StatusOK, nil)
 	
 }
