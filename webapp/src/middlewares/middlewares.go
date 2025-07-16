@@ -24,4 +24,3 @@ func Autenticar(proximaFuncao http.HandlerFunc) http.HandlerFunc {
 		proximaFuncao(w, r)
 	}
 }
-//func proximaFuncao(w http.ResponseWriter, r *http.Request){}
