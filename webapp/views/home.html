@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Página Principal</title>
 </head>
+
 <body>
   <h2>Página Principal!</h2>
+
+  {{ range . }}
+  <div>
+    <h3>{{ .Titulo }}</h3>
+    <p>{{ .Conteudo }}</p>
+    <p><strong>Autor:</strong> {{ .AutorNick }}</p>
+    <p><strong>Data:</strong> {{ .CriadaEm }}</p>
+  <hr/>
+  </div>
+  {{ end }}
 </body>
+
 </html>
