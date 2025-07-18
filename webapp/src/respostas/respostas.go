@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
-) 
+)
 
 // Erro representa a resposta de erro da API
 type ErroAPI struct {
@@ -16,8 +16,10 @@ func JSON(w http.ResponseWriter, statusCode int, dados any) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)
 
-	if erro := json.NewEncoder(w).Encode(dados); erro != nil {
-		log.Fatal()
+	if dados != nil {
+		if erro := json.NewEncoder(w).Encode(dados); erro != nil {
+			log.Fatal()
+		}
 	}
 }
 
