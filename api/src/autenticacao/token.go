@@ -15,7 +15,7 @@ import (
 func CriarToken(usuarioID uint64) (string, error){
 	permissoes := jwt.MapClaims{}
 	permissoes["authorized"] = true
-	permissoes["exp"] = time.Now().Add(time.Hour * 6).Unix()
+	permissoes["exp"] = time.Now().Add(time.Minute * 6).Unix()
 	permissoes["usuarioId"] = usuarioID
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, permissoes)
 	return token.SignedString([]byte(config.SecretKey)) //secret
@@ -26,6 +26,9 @@ func ValidarToken(r *http.Request) error {
 	tokenString := extrairToken(r)
 	token, erro := jwt.Parse(tokenString,retornarChaveDeVerificacao)
 	if erro != nil {
+		if ve, ok := erro.(*jwt.ValidationError); ok && ve.Errors == jwt.ValidationErrorExpired {						
+			return errors.New("Token expirado!");  
+		}
 		return erro
 	}
 
