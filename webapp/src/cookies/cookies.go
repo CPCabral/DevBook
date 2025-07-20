@@ -46,6 +46,8 @@ func Ler(r *http.Request) (map[string]string, error) {
 		return nil, erro
 	}
 
+	// Verifica se o token é válido
+
 	return valores, nil
 }
 

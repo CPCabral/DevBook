@@ -17,7 +17,15 @@ import (
 
 // CarregarTelaDeLogin carrega a tela de login para o usuario
 func CarregarTelaDeLogin(w http.ResponseWriter, r *http.Request) {
-	utils.ExecutarTemplates(w, "login.html", nil)
+	cookie, _ := cookies.Ler(r)
+
+	if cookie["token"] == "" {
+		utils.ExecutarTemplates(w, "login.html", nil)
+	} else {
+		http.Redirect(w, r, "/home", 302)
+		return
+	}
+	
 }
 
 func CarregarPaginaDeCadastroDeUsuario(w http.ResponseWriter, r *http.Request) {
