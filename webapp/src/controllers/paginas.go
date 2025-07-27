@@ -123,4 +123,23 @@ func CarregarPaginaDeUsuarios(w http.ResponseWriter, r *http.Request) {
 	utils.ExecutarTemplates(w, "usuarios.html", usuarios)
 }
 
-// CarregarPaginaDePerfil carrega a pagina de perfil do usuario
+// CarregarPerfilDoUsuario carrega o perfil do usuario
+func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	cookie, _ := cookies.Ler(r)
+	usuarioLogadoID, _ := strconv.ParseUint(cookie["id"], 10, 64)
+
+	if usuarioID == usuarioLogadoID {
+		http.Redirect(w, r, "/perfil", 302)
+		return
+	}
+	
+	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioID, r)
+	fmt.Println(usuario, erro)
+}
