@@ -139,7 +139,18 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		http.Redirect(w, r, "/perfil", 302)
 		return
 	}
-	
+
 	usuario, erro := modelos.BuscarUsuarioCompleto(usuarioID, r)
-	fmt.Println(usuario, erro)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	utils.ExecutarTemplates(w, "usuario.html", struct{
+		Usuario modelos.Usuario
+		usuarioLogadoID uint64
+	}{
+		Usuario: usuario,
+		usuarioLogadoID: usuarioLogadoID,
+	})
 }
