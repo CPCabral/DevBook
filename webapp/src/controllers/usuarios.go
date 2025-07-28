@@ -5,8 +5,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strconv"
 	"webapp/config"
+	"webapp/src/requisicoes"
 	"webapp/src/respostas"
+
+	"github.com/gorilla/mux"
 )
 
 // CriarUsuario chama a API para cadastrar um usuário no banco de dados
@@ -40,4 +44,30 @@ func CriarUsuario(w http.ResponseWriter, r *http.Request) {
 	
 	respostas.JSON(w, response.StatusCode, nil)
 	
+}
+
+// PararDeSeguirUsuario chama a api para parar de seguir o usuario
+func PararDeSeguirUsuario(w http.ResponseWriter, r *http.Request) {
+	parametros := mux.Vars(r)
+	usuarioID, erro := strconv.ParseUint(parametros["usuarioId"], 10, 64)
+	if erro != nil {
+		respostas.JSON(w, http.StatusBadRequest, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+
+	url := fmt.Sprintf("%s/usuarios/%d/parar-de-seguir", config.APIURL, usuarioID)
+	response, erro := requisicoes.FazerRequisicaoComAutenticacao(r, http.MethodPost, url, nil)
+	if erro != nil {
+		respostas.JSON(w, http.StatusInternalServerError, respostas.ErroAPI{Erro: erro.Error()})
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode >= 400 {
+		respostas.TratarStatusCodeDeErro(w, response)
+		return
+	}
+
+	respostas.JSON(w, response.StatusCode, nil)
+
 }

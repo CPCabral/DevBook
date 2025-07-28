@@ -50,23 +50,23 @@ func BuscarUsuarioCompleto(usuarioID uint64, r *http.Request) (Usuario, error) {
 
 			usuario = usuarioCarregado	
 		case seguidoresCarregados := <-canalSeguidores:
-			// if seguidoresCarregados == nil {				
-			// 	return Usuario{}, errors.New("Erro ao buscar seguidores!")
-			// }
+			if seguidoresCarregados == nil {				
+				return Usuario{}, errors.New("Erro ao buscar seguidores!")
+			}
 
 			seguidores = seguidoresCarregados
 	
 		case seguindoCarregados := <-canalSeguindo:
-			// if seguindoCarregados == nil {				
-			// 	return Usuario{}, errors.New("Erro ao buscar quem o usuário está seguindo!")
-			// }
+			if seguindoCarregados == nil {				
+				return Usuario{}, errors.New("Erro ao buscar quem o usuário está seguindo!")
+			}
 
 			seguindo = seguindoCarregados
 		
 		case publicacoesCarregadas := <-canalPublicacoes:
-			// if publicacoesCarregadas == nil {				
-			// 	return Usuario{}, errors.New("Erro ao buscar publicações!")
-			// }
+			if publicacoesCarregadas == nil {				
+				return Usuario{}, errors.New("Erro ao buscar publicações!")
+			}
 
 			publicacoes = publicacoesCarregadas
 		}
@@ -111,6 +111,12 @@ func BuscarSeguidores(canal chan<- []Usuario, usuarioID uint64, r *http.Request)
 			canal  <- nil
 			return
 		}
+
+		if seguidores == nil {
+		canal <- make([]Usuario, 0)
+		return
+		}
+
 		canal <- seguidores
 }
 
@@ -128,6 +134,11 @@ func BuscarSeguindo(canal chan<- []Usuario, usuarioID uint64, r *http.Request) {
 		if erro = json.NewDecoder(response.Body).Decode(&seguindo); erro != nil {
 			canal  <- nil
 			return
+		}
+
+		if seguindo == nil {
+		canal <- make([]Usuario, 0)
+		return
 		}
 		canal <- seguindo
 }
@@ -147,6 +158,12 @@ func BuscarPublicacoes(canal chan<- []Publicacao, usuarioID uint64, r *http.Requ
 			canal  <- nil
 			return
 		}
+
+		if publicacoes == nil {
+		canal <- make([]Publicacao, 0)
+		return
+		}
+
 		canal <- publicacoes
 }
 
