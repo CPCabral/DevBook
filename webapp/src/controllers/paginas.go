@@ -146,11 +146,15 @@ func CarregarPerfilDoUsuario(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	seguidoPeloUsuarioLogado := modelos.UsuarioESeguidor(usuarioLogadoID, usuario.Seguidores)
+
 	utils.ExecutarTemplates(w, "usuario.html", struct{
 		Usuario modelos.Usuario
 		usuarioLogadoID uint64
+		SeguidoPeloUsuarioLogado bool
 	}{
 		Usuario: usuario,
 		usuarioLogadoID: usuarioLogadoID,
+		SeguidoPeloUsuarioLogado: seguidoPeloUsuarioLogado,
 	})
 }

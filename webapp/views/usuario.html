@@ -11,14 +11,7 @@
 <body>
 
   {{ template "cabecalho" }}
-
-  {{ $SeguidoPeloUsuarioLogado := false }}
-  {{ range .Usuario.Seguidores }}
-  {{ if (eq .ID $.UsuarioLogadoID) }}
-  {{ $SeguidoPeloUsuarioLogado = true }}
-  {{ end }}
-  {{ end }}
-
+ 
   <div class="container-fluid">
     <div class="row mt-4">
       <div class="col-12">
@@ -40,10 +33,9 @@
                 Seguindo: {{ len .Usuario.Seguindo }}
               </a>
             </p>
-
-
+  
             <a href="#" class="card-link">
-              {{ if $SeguidoPeloUsuarioLogado }}
+              {{ if .SeguidoPeloUsuarioLogado }}
               <button id="parar-de-seguir" class="btn btn-info" data-usuario-id="{{ .Usuario.ID }}">
                 Parar de Seguir
               </button>
@@ -53,9 +45,8 @@
                 Seguir
               </button>
               {{ end }}
-            </a>
-
-
+              
+            </a>     
           </div>
         </div>
       </div>

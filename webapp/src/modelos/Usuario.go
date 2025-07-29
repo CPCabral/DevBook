@@ -19,7 +19,7 @@ type Usuario struct {
 	CriadoEm  time.Time `json:"criadoEm"`
 	Seguidores []Usuario `json:"seguidores"`
 	Seguindo []Usuario `json:"seguindo"`
-	Publicacoes []Publicacao	`json:"publicacoes"`
+	Publicacoes []Publicacao	`json:"publicacoes"`	
 }
 
 // BuscarUsuarioCompleto faz 4 requisições na API para montar o usuário completo
