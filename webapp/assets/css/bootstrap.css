@@ -12056,4 +12056,7 @@ label {
   border-radius: .3rem;
 }
 
+.card-link + .card-link::before {
+  content: "";
+}
 /*# sourceMappingURL=bootstrap.css.map */
